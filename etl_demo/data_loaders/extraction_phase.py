@@ -4,14 +4,16 @@ if 'test' not in globals():
     from mage_ai.data_preparation.decorators import test
 
 import pandas as pd
+import requests
 
 @data_loader
 def load_data(*args, **kwargs):
-    # Define the directory where your files are located
-    data_dir = 'Datasets/pos_transactions.csv'
+    # Fetch data from the API
+    response = requests.get('http://127.0.0.1:5000/generate')
+    data = response.json()
     
-    # Load CSV file
-    df = pd.read_csv(data_dir)
+    # Convert to DataFrame
+    df = pd.DataFrame(data)
     return df
 
 @test
