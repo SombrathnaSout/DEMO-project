@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from faker import Faker
+import pandas as pd
 import random
 import uuid
 
@@ -19,9 +20,15 @@ def introduce_imperfections(record):
 
 def generate_pos_transactions(num_records):
     data = []
+    transaction_ids = set()
     for _ in range(num_records):
+        transaction_id = str(uuid.uuid4())
+        while transaction_id in transaction_ids:
+            transaction_id = str(uuid.uuid4())
+        transaction_ids.add(transaction_id)
+
         record = {
-            "transaction_id": str(uuid.uuid4()),
+            "transaction_id": transaction_id,
             "product_id": str(uuid.uuid4()),
             "customer_id": str(uuid.uuid4()),
             "store_id": str(uuid.uuid4()),

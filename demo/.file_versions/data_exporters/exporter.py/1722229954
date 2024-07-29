@@ -1,0 +1,30 @@
+if 'data_exporter' not in globals():
+    from mage_ai.data_preparation.decorators import data_exporter
+
+import sqlite3
+import pandas as pd
+
+@data_exporter
+def export_data(df, *args, **kwargs):
+    if df.empty:
+        print("No new data to export. The DataFrame is empty.")
+        return
+
+    # Get the new database path
+    db_path = 'new_database.db'
+
+    # Connect to the SQLite database
+    conn = sqlite3.connect(db_path)
+
+    # Create the table if it doesn't exist
+    cursor = conn.cursor()
+    
+    df.to_sql('pos_table', conn, if_exists='append', index=False)
+
+    updated_transactions = pd.read_sql_query("SELECT transaction_id FROM pos_table", conn)
+    print(updated_transactions)
+
+    # Close the connection
+    conn.close()
+
+    print(f"Data exported to SQLite database: {db_path}")

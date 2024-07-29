@@ -1,0 +1,45 @@
+if 'transformer' not in globals():
+    from mage_ai.data_preparation.decorators import transformer
+if 'test' not in globals():
+    from mage_ai.data_preparation.decorators import test
+
+import pandas as pd
+
+@transformer
+def transform(df, *args, **kwargs):
+    # Data quality checks
+    required_columns = ['transaction_id', 'quantity', 'price', 'transaction_date', 'customer_id']
+    for col in required_columns:
+        assert col in df.columns, f"Missing '{col}' column"
+
+    # Replace invalid dates with a placeholder
+    df['transaction_date'] = df['transaction_date'].apply(lambda x: x if x != 'invalid_date' and pd.notnull(x) else '0000-00-00')
+
+    # Replace negative or zero quantities and prices with -1
+    df['quantity'] = df['quantity'].apply(lambda x: x if x > 0 else -1)
+    df['price'] = df['price'].apply(lambda x: x if x > 0 else -1)
+
+    # Replace excessively high quantities with -1 (assuming a max realistic value)
+    df['quantity'] = df['quantity'].apply(lambda x: x if x <= 1000 else -1)
+
+    # Replace invalid customer_ids with a placeholder
+    df['customer_id'] = df['customer_id'].apply(lambda x: x if pd.notnull(x) and x != '' else 'MISSING')
+
+    # Check for and fill other missing values with a placeholder
+    for col in df.columns:
+        if df[col].dtype == 'object':
+            df[col] = df[col].fillna('MISSING')
+        else:
+            df[col] = df[col].drop
+
+    # Remove duplicate transaction IDs within the incoming data
+    df = df.drop_duplicates(subset=['transaction_id'])
+
+    return df
+
+@test
+def test_output(df) -> None:
+    assert df is not None, 'The output is undefined'
+    assert len(df) > 0, 'The output is empty'
+    assert df['transaction_date'].str.match(r'^\d{4}-\d{2}-\d{2}$|^0000-00-00$').all(), "Found invalid dates"
+    assert df['customer_id'].str.match(r'^[a-zA-Z0-9\-]+$|^MISSING$').all(), "Found invalid customer IDs"

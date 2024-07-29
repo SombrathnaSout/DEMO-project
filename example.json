@@ -1,0 +1,15 @@
+[{"customer_id":"b5b02799-7712-42e7-b4cc-843c3e319d73",
+"price":11.43,
+"product_id":"472f5376-35de-45a0-9594-51e5e3a98937",
+"quantity":30,
+"store_id":"c83c9b4a-838d-4fe1-b5ce-647ab2fd84ed",
+"transaction_date":"2024-04-30",
+"transaction_id":"d958c845-3e5d-442c-8734-13ad9f835538"},
+
+{"customer_id":"998d413c-0414-4a58-9dfb-6120adcdaf95",
+"price":36.08,
+"product_id":"63293557-5296-45da-8584-c11123fa924b",
+"quantity":90,
+"store_id":"a0f48175-a136-4651-b87c-e61a240eeb54",
+"transaction_date":"2024-02-27",
+"transaction_id":"55dfbdcc-7417-4821-90bf-3cef64fc70d5"}]
